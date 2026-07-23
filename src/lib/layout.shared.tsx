@@ -4,6 +4,15 @@ import Image from 'next/image';
 import type { LinkItemType } from 'fumadocs-ui/layouts/docs';
 
 export const linkItems: LinkItemType[] = [
+  ...(process.env.DOCS_CONSOLE_URL
+    ? [
+        {
+          url: process.env.DOCS_CONSOLE_URL,
+          text: 'Console',
+          external: true,
+        },
+      ]
+    : []),
   {
     type: 'icon',
     url: 'https://github.com/QuantumNous/new-api',
@@ -56,6 +65,8 @@ export const logo = (
 );
 
 export function baseOptions(locale: string): BaseLayoutProps {
+  const siteName = process.env.DOCS_SITE_NAME || 'New API';
+
   return {
     i18n,
     nav: {
@@ -63,7 +74,7 @@ export function baseOptions(locale: string): BaseLayoutProps {
         <>
           {logo}
           <span className="font-medium in-[header]:text-[15px] [.uwu_&]:hidden">
-            New API
+            {siteName}
           </span>
         </>
       ),
