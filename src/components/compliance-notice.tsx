@@ -10,8 +10,7 @@ export function ComplianceNotice({ lang }: { lang: string }) {
       <div className="mx-auto max-w-[var(--fd-layout-width)] flex items-center gap-2">
         <span className="shrink-0">⚠️</span>
         <span>
-          合规提示：本项目仅用于合法授权的 API
-          网关、内部管理和私有化部署场景。请遵守上游服务条款、平台规则、监管要求和内容安全要求。
+          公益站提示：本站仅供 AI 学习与体验，我们会尽力保持服务稳定，但不承诺持续可用。请勿滥用、转售或用于违法用途，避免提交隐私及其他敏感信息。
         </span>
       </div>
     </div>
