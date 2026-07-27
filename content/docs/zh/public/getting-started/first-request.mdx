@@ -1,0 +1,76 @@
+---
+title: 第一次 API 请求
+---
+
+## 前置条件
+
+- 已 [注册并登录](/zh/docs/public/getting-started/register-login)
+- 已 [创建 API 令牌](/zh/docs/public/getting-started/create-token)
+- 电脑上已安装 `curl`（macOS/Linux 自带，Windows 需安装）
+
+## 使用 curl 测试
+
+打开终端（Terminal），粘贴以下命令，**将 `sk-xxx` 替换为你自己的令牌**：
+
+```bash
+curl https://api.unsnow.org/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-你的令牌" \
+  -d '{
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": "用一句话介绍你自己"}]
+  }'
+```
+
+如果一切正常，你会收到类似这样的 JSON 响应：
+
+```json
+{
+  "id": "chatcmpl-xxx",
+  "object": "chat.completion",
+  "created": 1234567890,
+  "model": "gpt-3.5-turbo",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "我是一个AI助手，可以回答问题和帮助解决问题。"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 10,
+    "completion_tokens": 15,
+    "total_tokens": 25
+  }
+}
+```
+
+## 使用 Python 测试
+
+```python
+import requests
+
+url = "https://api.unsnow.org/v1/chat/completions"
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer sk-你的令牌"
+}
+data = {
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": "用一句话介绍你自己"}]
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json()["choices"][0]["message"]["content"])
+```
+
+## 如果失败了
+
+跳到 [常见错误速查](/zh/docs/public/getting-started/common-errors) 查找对应错误码的解决方法。
+
+最常见的两个错误：
+- **401** — 令牌错误或未设置，检查 `Authorization` 请求头
+- **429** — 调用太频繁，等几秒再试
