@@ -1,0 +1,74 @@
+---
+title: API、Base URL 与 API Key
+---
+
+调用 AI API 需要三个基本元素。这篇文章用最简单的方式说清楚它们是什么。
+
+## API 是什么
+
+API（应用程序接口）就是一种"标准化的通信方式"。你按照规定的格式发一条消息到指定的网址，服务器处理后返回结果。
+
+类比：API 就像餐厅的点餐窗口。你不需要进厨房、不需要知道菜怎么做——你只需要：
+1. 去正确的窗口（Base URL）
+2. 出示会员卡（API Key）
+3. 说出你想要什么（请求内容）
+4. 等服务员把菜端出来（响应结果）
+
+## Base URL（接口地址）
+
+Base URL 就是你要发送请求的目标网址。所有 API 调用都发往这个地址。
+
+公益站的 Base URL：
+
+```
+https://api.unsnow.org/v1
+```
+
+后面拼上具体功能路径就是完整的请求地址。例如对话接口：
+
+```
+https://api.unsnow.org/v1/chat/completions
+```
+
+## API Key（令牌/密钥）
+
+API Key 是你的身份凭证，证明"我是我"、"我有权限调用这个 API"。格式通常是 `sk-` 开头的一串字符。
+
+API Key 通过 HTTP 请求头（Header）传递。以 curl 为例：
+
+```bash
+-H "Authorization: Bearer sk-你的令牌"
+```
+
+> ⚠️ **API Key 就是你的密码**。谁拿到它，就能以你的身份调用服务。不要在公开代码、截图或聊天记录中暴露它。
+
+## 一个完整的请求长什么样
+
+```bash
+curl https://api.unsnow.org/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-你的令牌" \
+  -d '{
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": "你好"}]
+  }'
+```
+
+拆解一下：
+
+- `https://api.unsnow.org/v1/chat/completions` → Base URL + 功能路径
+- `Content-Type: application/json` → 告诉服务器"我发的数据是 JSON 格式"
+- `Authorization: Bearer sk-...` → 带上你的 API Key
+- `{"model": "...", "messages": [...]}` → 请求的正文（JSON）
+
+## OpenAI 兼容意味着什么
+
+公益站使用 **OpenAI 兼容格式**。这表示：
+
+- 你用 OpenAI 的 API 格式写的代码，只改 Base URL 和 API Key 就能跑在公益站上
+- 绝大多数支持 OpenAI 的客户端（Cherry Studio、Claude Code 等）都能直接接入
+- 官方文档在 [platform.openai.com/docs](https://platform.openai.com/docs)，参数说明直接参考即可
+
+## 下一步
+
+理解了三个基础元素 → [Token、上下文窗口和费用](token-context.mdx)

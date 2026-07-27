@@ -1,0 +1,63 @@
+---
+title: 配置 Cherry Studio
+---
+
+Cherry Studio 是一个免费开源的桌面 AI 客户端，支持 Windows、macOS、Linux。
+
+## 下载安装
+
+1. 访问 [Cherry Studio 官网](https://cherry-ai.com/) 或 GitHub Releases
+2. 下载对应系统版本并安装
+
+## 接入公益站
+
+1. 打开 Cherry Studio → 左下角 **「设置」**
+2. 找到 **「模型服务」** → 选择 **「OpenAI」**
+3. 填写以下信息：
+
+| 设置项 | 内容 |
+|--------|------|
+| API 地址 | `https://api.unsnow.org/v1` |
+| API 密钥 | `sk-你的令牌` |
+| 模型名称 | `gpt-3.5-turbo`（或任何你需要的） |
+
+4. 点击 **「检查」** 按钮测试连接
+5. 显示"连接成功"即可使用
+
+## 添加更多模型
+
+Cherry Studio 支持同时配置多个模型：
+
+1. 在模型列表中添加每一行一个模型名：
+```
+gpt-3.5-turbo
+gpt-4o
+deepseek-chat
+deepseek-reasoner
+```
+
+2. 对话时可以从顶部下拉菜单随意切换
+
+## 使用知识库
+
+Cherry Studio 内置 RAG 知识库功能：
+
+1. 左侧菜单 → **「知识库」**
+2. 创建知识库 → 上传文档（支持 PDF、Markdown、TXT）
+3. 在对话中通过 `@知识库名` 引用
+
+> 知识库的 Embedding 调用也会经过公益站 API，注意 token 消耗。
+
+## 常见问题
+
+| 问题 | 解决 |
+|------|------|
+| 连接失败 | 检查 API 地址是否以 `/v1` 结尾 |
+| 401 错误 | 确认 API Key 前面有 `sk-`，复制完整 |
+| 模型列表为空 | 手动输入模型名或点"检查"自动获取 |
+| 回复慢 | 换用 gpt-3.5-turbo，响应更快 |
+
+## 替代工具
+
+- [配置 DeepChat](deepchat.mdx) — 更轻量的选择
+- [配置 Claude Code](claude-code.mdx) — 终端编程

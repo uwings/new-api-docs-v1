@@ -1,0 +1,121 @@
+---
+title: 搭建 Telegram Bot 接入 AI
+---
+
+用公益站 API 给 Telegram Bot 装上大脑。
+
+## 前置条件
+
+- 一个 Telegram 账号
+- Python 3.7+
+- 公益站 API 令牌
+
+## 第一步：创建 Bot
+
+1. 在 Telegram 搜索 `@BotFather`
+2. 发送 `/newbot`
+3. 按提示设置 Bot 名称和用户名
+4. 获得 Bot Token（格式：`123456:ABC-DEF1234gh...`）
+
+## 第二步：安装依赖
+
+```bash
+pip install python-telegram-bot requests
+```
+
+## 第三步：编写 Bot 代码
+
+```python
+import requests
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+
+API_BASE = "https://api.unsnow.org/v1"
+API_KEY = "sk-你的公益站令牌"
+BOT_TOKEN = "你的Bot Token"
+
+def chat_with_ai(user_message: str) -> str:
+    """调用公益站 API"""
+    resp = requests.post(
+        f"{API_BASE}/chat/completions",
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {API_KEY}"
+        },
+        json={
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": user_message}]
+        },
+        timeout=30
+    )
+    if resp.status_code == 200:
+        return resp.json()["choices"][0]["message"]["content"]
+    return f"出错了: {resp.status_code}"
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("你好！我是 AI Bot，直接发消息跟我聊天吧。")
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_text = update.message.text
+    await update.message.chat.send_action("typing")  # 显示"正在输入"
+    reply = chat_with_ai(user_text)
+    await update.message.reply_text(reply)
+
+def main():
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    print("Bot 已启动...")
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
+```
+
+## 第四步：运行
+
+```bash
+python bot.py
+```
+
+在 Telegram 中找到你的 Bot，发消息试试。
+
+## 进阶：多轮对话
+
+加上对话历史记忆：
+
+```python
+from collections import defaultdict
+
+histories = defaultdict(list)  # 按用户 ID 存储历史
+
+def chat_with_history(user_id: int, message: str) -> str:
+    history = histories[user_id]
+    history.append({"role": "user", "content": message})
+
+    resp = requests.post(
+        f"{API_BASE}/chat/completions",
+        headers={"Authorization": f"Bearer {API_KEY}"},
+        json={
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                {"role": "system", "content": "你是一个友好的 Telegram Bot"},
+                *history[-10:]  # 只保留最近 10 条
+            ]
+        }
+    )
+    reply = resp.json()["choices"][0]["message"]["content"]
+    history.append({"role": "assistant", "content": reply})
+    return reply
+```
+
+## 常见问题
+
+- **Bot 不回复** → 检查 BOT_TOKEN 是否正确
+- **429 限流** → 加上频控，每个用户每秒最多一条消息
+- **超时** → 增加了 `timeout=30`，或换更快的模型
+
+## 下一步
+
+- [Agent 工作流教程](/zh/docs/public/agents)
+- [图片生成与语音转写](image-audio.mdx)

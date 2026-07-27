@@ -1,0 +1,64 @@
+---
+title: 配置 Claude Code 使用公益站 API
+---
+
+Claude Code（CC）是 Anthropic 推出的终端 AI 编程工具，默认用 Anthropic API。通过修改配置，可以让它使用公益站的 OpenAI 兼容接口。
+
+## 配置方法
+
+### 方法一：环境变量
+
+在终端设置以下环境变量：
+
+```bash
+export ANTHROPIC_BASE_URL="https://api.unsnow.org/v1"
+export ANTHROPIC_API_KEY="sk-你的令牌"
+```
+
+然后照常使用 `claude` 命令。
+
+### 方法二：CC Switch
+
+如果使用 [CC Switch](https://github.com/eqty/cc-switch) 来管理配置：
+
+```bash
+cc-switch add unsnow \
+  --base-url https://api.unsnow.org/v1 \
+  --api-key sk-你的令牌
+
+cc-switch use unsnow
+```
+
+### 方法三：配置文件
+
+在项目根目录创建 `.claude.json`：
+
+```json
+{
+  "baseUrl": "https://api.unsnow.org/v1",
+  "apiKey": "sk-你的令牌"
+}
+```
+
+## 模型选择
+
+配置好以后，可以用公益站提供的模型：
+
+```bash
+# 用 gpt-3.5-turbo（日常任务）
+claude -m gpt-3.5-turbo "优化这段代码的可读性"
+
+# 用 deepseek-chat（编程任务）
+claude -m deepseek-chat "帮我写一个 REST API 的单元测试"
+```
+
+## 已知限制
+
+- Claude Code 的部分功能依赖 Anthropic 原生 API（如 extended thinking），用公益站模型时可能不可用
+- 建议日常编程用 `deepseek-chat`，代码理解和生成能力较好
+- 工具调用（function calling）需要模型支持，gpt-3.5-turbo 和 deepseek-chat 都支持
+
+## 替代方案
+
+- [配置 Codex CLI](codex-cli.mdx) — OpenAI 官方 CLI
+- [配置 Cherry Studio](cherry-studio.mdx) — 图形界面客户端

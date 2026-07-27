@@ -1,0 +1,139 @@
+---
+title: Python 调用示例
+---
+
+## 前置条件
+
+- Python 3.7+
+- `pip install requests`（或直接用 `urllib`，Python 自带）
+
+## Hello World
+
+```python
+import requests
+
+url = "https://api.unsnow.org/v1/chat/completions"
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer sk-你的令牌"
+}
+data = {
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": "你好"}]
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json()["choices"][0]["message"]["content"])
+```
+
+## 实用封装
+
+把 API 调用封装成函数，方便复用：
+
+```python
+import requests
+
+class AI:
+    def __init__(self, api_key, base_url="https://api.unsnow.org/v1"):
+        self.api_key = api_key
+        self.base_url = base_url
+
+    def chat(self, prompt, model="gpt-3.5-turbo", system="你是一个有用的AI助手"):
+        resp = requests.post(
+            f"{self.base_url}/chat/completions",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.api_key}"
+            },
+            json={
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": prompt}
+                ]
+            }
+        )
+        return resp.json()["choices"][0]["message"]["content"]
+
+# 使用
+ai = AI("sk-你的令牌")
+print(ai.chat("用一句话介绍Python"))
+```
+
+## 多轮对话
+
+```python
+messages = [
+    {"role": "system", "content": "你是简洁的助手，用中文回答"},
+]
+
+while True:
+    user_input = input("你: ")
+    if user_input.lower() in ["exit", "quit", "退出"]:
+        break
+    messages.append({"role": "user", "content": user_input})
+    resp = requests.post(
+        f"{url}/chat/completions",
+        headers=headers,
+        json={"model": "gpt-3.5-turbo", "messages": messages}
+    )
+    reply = resp.json()["choices"][0]["message"]["content"]
+    print(f"AI: {reply}")
+    messages.append({"role": "assistant", "content": reply})
+```
+
+## 流式输出
+
+```python
+import json
+
+data = {
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": "写一首关于夏天的诗"}],
+    "stream": True
+}
+
+resp = requests.post(url, headers=headers, json=data, stream=True)
+for line in resp.iter_lines():
+    if line:
+        line = line.decode("utf-8")
+        if line.startswith("data: "):
+            chunk = line[6:]
+            if chunk == "[DONE]":
+                break
+            content = json.loads(chunk)["choices"][0]["delta"].get("content", "")
+            print(content, end="", flush=True)
+print()
+```
+
+## 错误处理
+
+```python
+def safe_chat(prompt, api_key):
+    try:
+        resp = requests.post(
+            f"{url}/chat/completions",
+            headers=headers,
+            json={"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": prompt}]},
+            timeout=30
+        )
+        if resp.status_code == 200:
+            return resp.json()["choices"][0]["message"]["content"]
+        elif resp.status_code == 429:
+            return "请求太频繁，请稍后再试"
+        elif resp.status_code == 401:
+            return "API Key 错误，请检查"
+        else:
+            return f"请求失败: {resp.status_code} {resp.text}"
+    except requests.exceptions.Timeout:
+        return "请求超时，请检查网络"
+    except Exception as e:
+        return f"发生错误: {e}"
+
+print(safe_chat("你好", "sk-你的令牌"))
+```
+
+## 下一步
+
+- [JavaScript 调用示例](javascript-examples.mdx)
+- [流式响应和错误重试](streaming-retry.mdx)

@@ -1,0 +1,130 @@
+---
+title: Agent 工作流入门
+---
+
+AI Agent 能自主使用工具、调用 API、执行多步操作来完成一个任务。这篇文章教你理解 Agent 的核心概念并动手搭建一个简单 Agent。
+
+## Agent vs 普通对话
+
+| | 普通对话 | Agent |
+|--|---------|-------|
+| 交互方式 | 你问 → AI 答 | 你给目标 → AI 自己规划步骤 |
+| 能力范围 | 只能"说话" | 能调用工具、搜索、读写文件 |
+| 复杂度 | 单轮回答 | 多步推理和执行 |
+| 例子 | "帮我翻译这句话" | "帮我找到今天 AI 领域最重要的 3 条新闻，写成简报发邮件" |
+
+## Agent 的四个组件
+
+```
+目标 → LLM → 工具 → 循环
+  ↑                |
+  └────── 反馈 ────┘
+```
+
+1. **LLM（大脑）**：思考、推理、规划
+2. **工具（手脚）**：搜索、计算、调用 API、读写文件
+3. **循环（执行力）**：拿到工具结果后继续调用 LLM 判断下一步
+4. **停止条件**：目标达成或达到最大步数
+
+## 简单 Agent 实现
+
+```python
+import requests
+import json
+
+API_KEY = "sk-你的令牌"
+API_BASE = "https://api.unsnow.org/v1"
+
+# 工具定义
+tools = [
+    {
+        "name": "get_weather",
+        "description": "获取指定城市的天气",
+        "params": {"city": "城市名称，如 Beijing"}
+    },
+    {
+        "name": "calculate",
+        "description": "计算数学表达式",
+        "params": {"expression": "数学表达式，如 2+3*4"}
+    }
+]
+
+def call_tool(name, params):
+    """执行工具调用"""
+    if name == "get_weather":
+        return f"{params['city']}今天晴天，25°C"  # 模拟
+    elif name == "calculate":
+        return str(eval(params["expression"]))
+    return "未知工具"
+
+def chat(messages):
+    resp = requests.post(
+        f"{API_BASE}/chat/completions",
+        headers={"Authorization": f"Bearer {API_KEY}"},
+        json={"model": "gpt-3.5-turbo", "messages": messages}
+    )
+    return resp.json()["choices"][0]["message"]["content"]
+
+def run_agent(task, max_steps=5):
+    messages = [
+        {"role": "system", "content": f"""你是一个 AI Agent，可以使用以下工具完成任务：
+{json.dumps(tools, ensure_ascii=False, indent=2)}
+
+工作方式：
+1. 分析任务，决定需要调用哪个工具
+2. 输出 JSON 格式：{{"tool": "工具名", "params": {{"参数名": "值"}}}}
+3. 收到工具结果后，继续判断是否需要更多工具
+4. 任务完成时，输出：{{"done": true, "answer": "你的答案"}}
+
+不需要工具时直接回答。只输出 JSON。
+"""},
+        {"role": "user", "content": task}
+    ]
+
+    for step in range(max_steps):
+        response = chat(messages)
+        messages.append({"role": "assistant", "content": response})
+
+        try:
+            data = json.loads(response)
+        except json.JSONDecodeError:
+            return response  # 不是 JSON，当作最终回答
+
+        if data.get("done"):
+            return data["answer"]
+
+        if "tool" in data:
+            result = call_tool(data["tool"], data.get("params", {}))
+            messages.append({"role": "user", "content": f"工具 {data['tool']} 返回: {result}"})
+            continue
+
+        return response
+
+    return "达到最大步数，任务未完成。"
+
+# 测试
+print(run_agent("北京今天天气怎么样？如果温度超过20度，算一下 25*3 等于多少"))
+```
+
+## Agent 框架
+
+不想从零编写？用现成框架：
+
+| 框架 | 适合 | 特点 |
+|------|------|------|
+| LangChain | 快速上手 | 生态丰富，文档多 |
+| CrewAI | 多 Agent 协作 | 角色扮演式 Agent |
+| AutoGen | 复杂对话 | 微软出品，多 Agent 对话 |
+| Dify | 可视化 | 拖拽搭建 Agent 工作流 |
+
+## 实践建议
+
+- **从简单工具开始**：先做一个只会搜索和计算的 Agent
+- **加上安全边界**：不要让 Agent 无条件执行任何操作（如删库、转账）
+- **限制步数**：防止无限循环烧 token
+- **记录每一步**：方便调试为什么 Agent 做了某个决策
+
+## 下一步
+
+- [搭建个人知识库问答](knowledge-base-qa.mdx) — RAG 入门
+- [Bot 和消息平台接入](bot-tutorial.mdx) — 让 Agent 接入 Telegram

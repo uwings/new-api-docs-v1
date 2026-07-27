@@ -1,0 +1,124 @@
+---
+title: 图片生成与语音转写
+---
+
+公益站 API 支持图像和音频模型。这篇介绍怎么用。
+
+## 语音转文字（Whisper）
+
+把录音、会议音频转成文字。
+
+```python
+import requests
+
+url = "https://api.unsnow.org/v1/audio/transcriptions"
+headers = {"Authorization": "Bearer sk-你的令牌"}
+
+with open("录音.mp3", "rb") as f:
+    resp = requests.post(
+        url,
+        headers=headers,
+        files={"file": f},
+        data={"model": "whisper-1", "language": "zh"}
+    )
+
+print(resp.json()["text"])
+```
+
+支持格式：mp3、wav、m4a、ogg、flac
+
+## 图片理解（GPT-4o）
+
+让 AI "看懂"图片内容。
+
+```python
+resp = requests.post(
+    "https://api.unsnow.org/v1/chat/completions",
+    headers={"Authorization": "Bearer sk-你的令牌"},
+    json={
+        "model": "gpt-4o",
+        "messages": [{
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "图片里是什么？有什么文字？"},
+                {"type": "image_url", "image_url": {
+                    "url": "https://example.com/photo.jpg"
+                }}
+            ]
+        }]
+    }
+)
+```
+
+也可以用 base64 传本地图片：
+
+```python
+import base64
+
+with open("本地图片.jpg", "rb") as f:
+    b64 = base64.b64encode(f.read()).decode()
+
+resp = requests.post(
+    f"https://api.unsnow.org/v1/chat/completions",
+    headers={"Authorization": "Bearer sk-你的令牌"},
+    json={
+        "model": "gpt-4o",
+        "messages": [{
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "描述这张图片"},
+                {"type": "image_url", "image_url": {
+                    "url": f"data:image/jpeg;base64,{b64}"
+                }}
+            ]
+        }]
+    }
+)
+```
+
+> 图片越大 token 消耗越高。太大可以先用本地工具压缩。
+
+## 图片生成（DALL·E）
+
+生成图片（如果可用）：
+
+```python
+resp = requests.post(
+    "https://api.unsnow.org/v1/images/generations",
+    headers={"Authorization": "Bearer sk-你的令牌"},
+    json={
+        "model": "dall-e-3",
+        "prompt": "一只戴着墨镜的柴犬在海边冲浪",
+        "n": 1,
+        "size": "1024x1024"
+    }
+)
+print(resp.json()["data"][0]["url"])
+```
+
+## 视频理解
+
+上传视频帧或短视频文件让 AI 分析（需要支持的模型）：
+
+```python
+# 取视频第一帧
+import cv2
+video = cv2.VideoCapture("视频.mp4")
+ok, frame = video.read()
+cv2.imwrite("frame.jpg", frame)
+
+# 发给 GPT-4o 分析
+# ...（同上图片理解代码）
+```
+
+## 实际应用
+
+- **会议纪要**：录音 → Whisper 转文字 → GPT 生成摘要
+- **产品图分析**：上传竞品截图 → GPT 分析 UI 设计
+- **内容创作**：文字描述 → DALL·E 生成配图
+- **无障碍**：盲人拍照 → 图片理解 → 语音读出内容
+
+## 下一步
+
+- [Agent 工作流教程](/zh/docs/public/agents)
+- [搭建个人知识库问答](knowledge-base-qa.mdx)
