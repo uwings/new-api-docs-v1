@@ -1,7 +1,6 @@
 import { docs } from '@/.source';
 import { type InferPageType, loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
-import { openapiPlugin } from 'fumadocs-openapi/server';
 import { i18n } from '@/lib/i18n';
 
 export const source = loader({
@@ -10,7 +9,6 @@ export const source = loader({
   source: docs.toFumadocsSource(),
   plugins: [
     lucideIconsPlugin(),
-    openapiPlugin(), // Add badges to API pages in the page tree
   ],
 });
 

@@ -14,12 +14,9 @@ ENV DOCS_CONSOLE_URL=$DOCS_CONSOLE_URL
 
 COPY package.json ./
 
-# Match the versions in bun.lock while using Node for a reproducible
-# Next.js production build. The upstream package range otherwise resolves
-# fumadocs-openapi to a version incompatible with fumadocs-core 16.0.10.
-RUN npm pkg set dependencies.fumadocs-openapi="10.1.0" \
-    && npm pkg set dependencies.fumadocs-core="^16.2.0" \
-    && npm pkg set dependencies.fumadocs-ui="^16.2.0" \
+# Remove fumadocs-openapi (we don't need OpenAPI spec rendering) and pin vite.
+# This avoids the fumadocs-openapi / fumadocs-core 16.0.10 incompatibility.
+RUN npm pkg delete dependencies.fumadocs-openapi \
     && npm pkg set devDependencies.vite="6.1.0" \
     && npm install --include=dev --ignore-scripts --legacy-peer-deps
 
