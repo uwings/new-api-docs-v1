@@ -1,6 +1,6 @@
 ﻿---
 title: 技术架构
-description: aididai.cn 公益站的技术架构简介——从前端到上游 AI 服务商的请求链路
+description: airider.cn 公益站的技术架构简介——从前端到上游 AI 服务商的请求链路
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -8,7 +8,7 @@ import { Steps, Step } from 'fumadocs-ui/components/steps';
 
 ## 概述
 
-aididai.cn 基于开源 API 网关项目构建，整体架构可以理解为三层：**前端控制台**、**API 网关**、**上游 AI 服务商**。用户只需要关注最前方的接入部分，背后的路由和转发由平台自动完成。
+airider.cn 基于开源 API 网关项目构建，整体架构可以理解为三层：**前端控制台**、**API 网关**、**上游 AI 服务商**。用户只需要关注最前方的接入部分，背后的路由和转发由平台自动完成。
 
 ## 请求链路
 
@@ -16,7 +16,7 @@ aididai.cn 基于开源 API 网关项目构建，整体架构可以理解为三�
 
 <Steps>
   <Step title="你的应用 → 平台 API 网关">
-    你的代码向 `https://aididai.cn/v1/chat/completions` 发送请求，
+    你的代码向 `https://airider.cn/v1/chat/completions` 发送请求，
     携带平台签发的 API Key。网关验证令牌、检查额度、记录调用。
   </Step>
   <Step title="网关 → 上游 AI 服务商">
@@ -34,7 +34,7 @@ aididai.cn 基于开源 API 网关项目构建，整体架构可以理解为三�
 ```
 ┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐
 │  你的应用    │────▶│  平台 API 网关    │────▶│  上游 AI 服务商  │
-│             │◀────│  (aididai.cn)    │◀────│                 │
+│             │◀────│  (airider.cn)    │◀────│                 │
 └─────────────┘     └──────────────────┘     └─────────────────┘
                            │
                     ┌──────┴──────┐
@@ -57,7 +57,7 @@ aididai.cn 基于开源 API 网关项目构建，整体架构可以理解为三�
 你只需要：
 
 1. 在控制台注册并创建令牌
-2. 将 Base URL 指向 `https://aididai.cn`
+2. 将 Base URL 指向 `https://airider.cn`
 3. 在请求中指定要使用的模型名称
 4. 像调用 OpenAI 一样编写你的代码
 

@@ -13,7 +13,12 @@ async function prebuild() {
   const startTime = Date.now();
 
   try {
-    await generateChangelog();
+    // ⚠️ Changelog generation DISABLED — we maintain our own changelog manually
+    // The auto-generated upstream release changelog was replaced with our own
+    // public welfare station changelog. Do NOT re-enable without updating in sync.
+    // await generateChangelog();
+    console.log('ℹ Changelog auto-generation disabled. Using manual changelog.');
+    console.log('');
 
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
