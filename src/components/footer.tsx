@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Github, MessageCircle } from 'lucide-react';
 import { getLocalePath } from '@/lib/i18n';
 
 interface FooterProps {
@@ -9,15 +8,8 @@ interface FooterProps {
 // ============================================
 // Shared Data
 // ============================================
-// TODO: replace with our own social links when available
 const socialLinks: { name: string; href: string; icon: React.ReactNode }[] = [
-  {
-    name: 'GitHub',
-    href: 'https://github.com/uwings/new-api-docs-v1',
-    icon: <Github className="size-4" />,
-  },
-  // TODO: add Telegram / Discord / WeChat when community channels are set up
-  // TODO: add Docker Hub when we publish our own image
+  // No social links for now — add when community channels are set up
 ];
 
 // TODO: replace with our own ICP filing when domain is ready
@@ -26,14 +18,16 @@ const beianLinks: { text: string; href: string }[] = [
   // { text: '京ICP备XXXXXXX号-X', href: 'https://beian.miit.gov.cn/' },
 ];
 
-// External links — keep structure for future use
+// Related projects — upstream and ecosystem
 const relatedProjects: { label: string; href: string }[] = [
-  // TODO: add our own related projects when available
-  // { label: 'aididai.cn', href: 'https://aididai.cn' },
+  { label: 'New API', href: 'https://github.com/QuantumNous/new-api' },
+  { label: 'OpenAI API 文档', href: 'https://platform.openai.com/docs/api-reference' },
 ];
 
+// Friendship links — AI communities and resources
 const friendshipLinks: { label: string; href: string }[] = [
-  // TODO: add friendship links when partnerships are established
+  { label: 'AI 地带', href: 'https://aididai.cn' },
+  { label: 'AICC 社区', href: 'https://aicc.pro' },
 ];
 
 // ============================================
@@ -210,7 +204,7 @@ export function Footer({ lang }: FooterProps) {
           ))}
         </div>
 
-        {/* Bottom: Copyright and Social */}
+        {/* Bottom: Copyright */}
         <div className="border-fd-border flex flex-col items-start justify-between gap-4 border-t pt-8 sm:flex-row sm:items-center">
           {/* Left: Copyright and Beian */}
           <div className="text-fd-muted-foreground flex flex-col gap-2 text-xs">
@@ -228,30 +222,6 @@ export function Footer({ lang }: FooterProps) {
                 </a>
               ))}
             </div>
-          </div>
-
-          {/* Right: Social Icons */}
-          <div className="flex items-center gap-4">
-            {socialLinks.map((social) => {
-              const isExternal = social.href.startsWith('http');
-              const Component = isExternal ? 'a' : Link;
-              return (
-                <Component
-                  key={social.name}
-                  href={
-                    isExternal ? social.href : getLocalePath(lang, social.href)
-                  }
-                  {...(isExternal && {
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                  })}
-                  className="text-fd-muted-foreground hover:text-fd-foreground transition-colors"
-                  aria-label={social.name}
-                >
-                  {social.icon}
-                </Component>
-              );
-            })}
           </div>
         </div>
       </div>

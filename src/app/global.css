@@ -94,5 +94,11 @@ body {
 @media (min-width: 1280px) {
   .compliance-notice {
     margin-right: var(--fd-toc-width, 240px);
+    position: relative;
+    z-index: 10;
+  }
+  /* Push fixed TOC content down to clear the compliance notice (~60px) */
+  [class*="fixed"][class*="bottom-0"][class*="pt-12"] {
+    padding-top: 108px !important;
   }
 }
