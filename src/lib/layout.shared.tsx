@@ -17,15 +17,28 @@ export const linkItems: LinkItemType[] = [
 ];
 
 export const logo = (
-  <Image
-    alt="AI Rider"
-    src="/assets/airider-logo-small.svg"
-    width={20}
-    height={20}
-    className="size-5"
-    priority
-    unoptimized
-  />
+  <>
+    {/* Light theme logo (shown in light mode) */}
+    <Image
+      alt="AI Rider"
+      src="/assets/airider-logo-small.svg"
+      width={20}
+      height={20}
+      className="size-5 dark:hidden"
+      priority
+      unoptimized
+    />
+    {/* Dark theme logo (shown in dark mode) */}
+    <Image
+      alt="AI Rider"
+      src="/assets/airider-logo-small-dark.svg"
+      width={20}
+      height={20}
+      className="size-5 hidden dark:inline"
+      priority
+      unoptimized
+    />
+  </>
 );
 
 export function baseOptions(locale: string): BaseLayoutProps {

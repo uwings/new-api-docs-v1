@@ -11,9 +11,9 @@ export function createMetadata(override: Metadata): Metadata {
     openGraph: {
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      url: 'https://www.newapi.ai',
-      images: '/assets/logo.png',
-      siteName: 'New API',
+      url: 'https://aididai.cn',
+      images: '/assets/airider-logo-small.svg',
+      siteName: process.env.DOCS_SITE_NAME || 'AI Rider',
       type: 'website',
       ...override.openGraph,
     },
@@ -21,7 +21,7 @@ export function createMetadata(override: Metadata): Metadata {
       card: 'summary_large_image',
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      images: '/assets/logo.png',
+      images: '/assets/airider-logo-small.svg',
       ...override.twitter,
     },
   };

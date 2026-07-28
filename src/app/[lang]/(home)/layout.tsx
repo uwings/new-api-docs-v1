@@ -62,7 +62,7 @@ const i18nText: Record<
     title: { text: '文档', desc: '' },
     apiDocs: { text: 'Apifox 操练场', desc: '' },
     skills: { text: 'Skills', desc: '' },
-    start: { text: '快速开始', desc: '学习如何部署和配置 New API。' },
+    start: { text: '快速开始', desc: '三步上手：注册 → 创建令牌 → 发送请求。' },
     install: { text: '部署安装', desc: '多种部署方式和安装指南。' },
     support: { text: '帮助支持', desc: '常见问题和社区支持。' },
     api: { text: 'API 参考', desc: '完整的 API 文档和参考指南。' },
