@@ -8,14 +8,31 @@ import * as path from 'path';
 import { execSync } from 'child_process';
 
 // ============================================================================
-// Configuration
+// Configuration — dual-provider: GLM via airider.cn (primary) / DeepSeek (fallback)
 // ============================================================================
 
 const DOCS_DIR = path.join(process.cwd(), 'content', 'docs');
+
+// Primary provider — GLM via our API gateway
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
-const OPENAI_BASE_URL =
-  process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
-const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gemini-2.5-flash';
+const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://airider.cn/v1';
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'glm-4-flash';
+
+// Fallback provider — DeepSeek
+const FALLBACK_API_KEY = process.env.FALLBACK_API_KEY || '';
+const FALLBACK_BASE_URL = process.env.FALLBACK_BASE_URL || 'https://api.deepseek.com/v1';
+const FALLBACK_MODEL = process.env.FALLBACK_MODEL || 'deepseek-chat';
+
+interface ProviderConfig {
+  apiKey: string; baseUrl: string; model: string; name: string;
+}
+
+function buildProviders(): ProviderConfig[] {
+  const p: ProviderConfig[] = [];
+  if (OPENAI_API_KEY) p.push({ apiKey: OPENAI_API_KEY, baseUrl: OPENAI_BASE_URL, model: OPENAI_MODEL, name: 'GLM' });
+  if (FALLBACK_API_KEY) p.push({ apiKey: FALLBACK_API_KEY, baseUrl: FALLBACK_BASE_URL, model: FALLBACK_MODEL, name: 'DeepSeek' });
+  return p;
+}
 const MAX_RETRIES = parseInt(process.env.MAX_RETRIES || '3', 10);
 const RETRY_DELAY = parseInt(process.env.RETRY_DELAY || '2', 10);
 const RETRY_BACKOFF = parseFloat(process.env.RETRY_BACKOFF || '2.0');
@@ -69,19 +86,50 @@ interface TranslationResult {
 }
 
 // ============================================================================
-// Validation (deferred)
+// OpenAI-compatible API — multi-provider with fallback
 // ============================================================================
-// NOTE: Do not exit at import time. This file is also imported by tooling/scripts.
-function assertOpenAIKey() {
-  if (!OPENAI_API_KEY) {
-    console.error('❌ Error: OPENAI_API_KEY environment variable is not set');
-    process.exit(1);
-  }
+
+async function callOpenAIWithProvider(
+  prompt: string, targetLang: LanguageCode, provider: ProviderConfig
+): Promise<string> {
+  const response = await fetch(`${provider.baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${provider.apiKey}`,
+    },
+    body: JSON.stringify({
+      model: provider.model,
+      messages: [
+        { role: 'system', content: 'You are a professional technical documentation translator. Translate accurately while preserving Markdown formatting, code blocks, and technical terms.' },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.3,
+    }),
+  });
+  if (!response.ok) throw new Error(`[${provider.name}] API ${response.status} ${response.statusText}`);
+  const data = (await response.json()) as OpenAIResponse;
+  return data.choices[0].message.content.trim();
 }
 
-// ============================================================================
-// Translation Prompt Generation
-// ============================================================================
+async function callOpenAI(
+  prompt: string, targetLang: LanguageCode, providers: ProviderConfig[]
+): Promise<string> {
+  let last: Error | null = null;
+  for (const prov of providers) {
+    try { return await callOpenAIWithProvider(prompt, targetLang, prov); }
+    catch (e) {
+      last = e as Error;
+      const m = last.message;
+      if (/429|401|403|500|502|503|timeout|ECONNREFUSED/.test(m)) {
+        console.log(`   ⚠ ${prov.name} failed → trying fallback...`);
+        continue;
+      }
+      throw last;
+    }
+  }
+  throw last || new Error('No providers available');
+}
 
 const BASE_TRANSLATION_RULES = `
 翻译要求：
@@ -185,43 +233,8 @@ ${content}
 `;
 }
 
-// ============================================================================
-// OpenAI API Integration
-// ============================================================================
-
-async function callOpenAI(
-  prompt: string,
-  targetLang: LanguageCode
-): Promise<string> {
-  const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: OPENAI_MODEL,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a professional technical documentation translator. Translate accurately while preserving Markdown formatting, code blocks, and technical terms.',
-        },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.3,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `API request failed: ${response.status} ${response.statusText}`
-    );
-  }
-
-  const data = (await response.json()) as OpenAIResponse;
-  return data.choices[0].message.content.trim();
-}
+// Module-level providers cache
+let _providers: ProviderConfig[] | null = null;
 
 async function translateContent(
   content: string,
@@ -243,7 +256,7 @@ async function translateContent(
       const { protectedText, restore } = protectMdxSegments(content);
 
       const prompt = getTranslationPrompt(targetLang, protectedText);
-      const translated = await callOpenAI(prompt, targetLang);
+      const translated = await callOpenAI(prompt, targetLang, _providers!);
       return restore(translated);
     } catch (error) {
       lastError = error as Error;
@@ -277,7 +290,7 @@ async function translatePlainText(
   while (retryCount <= MAX_RETRIES) {
     try {
       const prompt = getPlainTextTranslationPrompt(targetLang, text);
-      return await callOpenAI(prompt, targetLang);
+      return await callOpenAI(prompt, targetLang, _providers!);
     } catch (error) {
       lastError = error as Error;
       retryCount++;
@@ -657,13 +670,15 @@ async function processFiles(
 // ============================================================================
 
 async function translateDocs(specificPaths?: string[]) {
-  // Gracefully skip translation when OPENAI_API_KEY is not set
-  // This is a public welfare project — translation is optional, not required
-  if (!OPENAI_API_KEY) {
-    console.log('ℹ OPENAI_API_KEY not set — skipping translation (graceful skip).');
-    console.log('  Set OPENAI_API_KEY in GitHub Secrets to enable automatic translation.');
+  const providers = buildProviders();
+  if (providers.length === 0) {
+    console.log('ℹ No translation providers configured (set OPENAI_API_KEY + optional FALLBACK_API_KEY).');
+    console.log('  Primary (GLM): OPENAI_API_KEY + OPENAI_BASE_URL (default: airider.cn/v1)');
+    console.log('  Fallback (DeepSeek): FALLBACK_API_KEY + FALLBACK_BASE_URL');
     return;
   }
+  _providers = providers;
+  console.log(`🚀 Translation providers: ${providers.map(p => `${p.name}(${p.model})`).join(' → ')}`);
   console.log('═══════════════════════════════════════════════');
   console.log('🌐 Starting document translation...');
   console.log('═══════════════════════════════════════════════\n');
