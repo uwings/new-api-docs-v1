@@ -20,7 +20,7 @@ const beianLinks: { text: string; href: string }[] = [
 
 // Related projects — upstream and ecosystem
 const relatedProjects: { label: string; href: string }[] = [
-  { label: 'New API', href: 'https://github.com/QuantumNous/new-api' },
+  { label: 'New API 开源', href: 'https://github.com/QuantumNous/new-api' },
   { label: 'OpenAI API 文档', href: 'https://platform.openai.com/docs/api-reference' },
 ];
 

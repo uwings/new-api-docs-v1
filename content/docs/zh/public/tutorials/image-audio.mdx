@@ -11,7 +11,7 @@ title: 图片生成与语音转写
 ```python
 import requests
 
-url = "https://api.unsnow.org/v1/audio/transcriptions"
+url = "https://airider.cn/v1/audio/transcriptions"
 headers = {"Authorization": "Bearer sk-你的令牌"}
 
 with open("录音.mp3", "rb") as f:
@@ -33,7 +33,7 @@ print(resp.json()["text"])
 
 ```python
 resp = requests.post(
-    "https://api.unsnow.org/v1/chat/completions",
+    "https://airider.cn/v1/chat/completions",
     headers={"Authorization": "Bearer sk-你的令牌"},
     json={
         "model": "gpt-4o",
@@ -59,7 +59,7 @@ with open("本地图片.jpg", "rb") as f:
     b64 = base64.b64encode(f.read()).decode()
 
 resp = requests.post(
-    f"https://api.unsnow.org/v1/chat/completions",
+    f"https://airider.cn/v1/chat/completions",
     headers={"Authorization": "Bearer sk-你的令牌"},
     json={
         "model": "gpt-4o",
@@ -84,7 +84,7 @@ resp = requests.post(
 
 ```python
 resp = requests.post(
-    "https://api.unsnow.org/v1/images/generations",
+    "https://airider.cn/v1/images/generations",
     headers={"Authorization": "Bearer sk-你的令牌"},
     json={
         "model": "dall-e-3",

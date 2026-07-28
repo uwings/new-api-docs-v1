@@ -18,7 +18,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Responses API 是 OpenAI 推荐的新一代对话接口，相比 Chat Completions 提供了更丰富的功能，包括内置工具调用、结构化输出等。
 
-**接口地址**：`POST https://aididai.cn/v1/responses`
+**接口地址**：`POST https://airider.cn/v1/responses`
 
 <Callout title="说明">
   Responses API 是较新的接口格式，部分模型可能尚未完整支持。如遇兼容问题，建议使用 Chat Completions 接口作为降级方案。
@@ -52,7 +52,7 @@ Responses API 是 OpenAI 推荐的新一代对话接口，相比 Chat Completion
 ### cURL 示例
 
 ```bash
-curl https://aididai.cn/v1/responses \
+curl https://airider.cn/v1/responses \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -69,7 +69,7 @@ curl https://aididai.cn/v1/responses \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/responses"
+url = "https://airider.cn/v1/responses"
 headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer sk-xxxxxxxx"

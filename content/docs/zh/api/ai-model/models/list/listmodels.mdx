@@ -23,13 +23,13 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ## 接口地址
 
 ```
-GET https://aididai.cn/v1/models
+GET https://airider.cn/v1/models
 ```
 
 ## 请求方式
 
 ```bash
-curl https://aididai.cn/v1/models \
+curl https://airider.cn/v1/models \
   -H "Authorization: Bearer sk-xxxxxxxx"
 ```
 
@@ -40,7 +40,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-xxxxxxxx",
-    base_url="https://aididai.cn/v1"
+    base_url="https://airider.cn/v1"
 )
 
 models = client.models.list()

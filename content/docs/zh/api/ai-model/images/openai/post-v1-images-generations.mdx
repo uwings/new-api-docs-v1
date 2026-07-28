@@ -17,7 +17,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ## 接口地址
 
 ```
-POST https://aididai.cn/v1/images/generations
+POST https://airider.cn/v1/images/generations
 ```
 
 ## 请求参数
@@ -37,7 +37,7 @@ POST https://aididai.cn/v1/images/generations
 ### cURL
 
 ```bash
-curl https://aididai.cn/v1/images/generations \
+curl https://airider.cn/v1/images/generations \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -56,7 +56,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-xxxxxxxx",
-    base_url="https://aididai.cn/v1"
+    base_url="https://airider.cn/v1"
 )
 
 response = client.images.generate(
@@ -75,7 +75,7 @@ print(response.data[0].url)
   "created": 1750000000,
   "data": [
     {
-      "url": "https://cdn.aididai.cn/images/gen_xxxxx.png",
+      "url": "https://cdn.airider.cn/images/gen_xxxxx.png",
       "revised_prompt": "一只戴着墨镜的橘猫坐在桌前，正在使用笔记本电脑..."
     }
   ]

@@ -42,7 +42,7 @@ export const logo = (
 );
 
 export function baseOptions(locale: string): BaseLayoutProps {
-  const siteName = process.env.DOCS_SITE_NAME || 'New API';
+  const siteName = process.env.DOCS_SITE_NAME || 'AI Rider';
 
   return {
     i18n,

@@ -16,7 +16,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Embeddings 接口将文本转换为高维向量，用于语义搜索、文本聚类、推荐系统等场景。生成的向量可以用于计算文本之间的语义相似度。
 
-**接口地址**：`POST https://aididai.cn/v1/embeddings`
+**接口地址**：`POST https://airider.cn/v1/embeddings`
 
 ## 请求参数
 
@@ -40,7 +40,7 @@ Embeddings 接口将文本转换为高维向量，用于语义搜索、文本聚
 ### cURL 示例（单条文本）
 
 ```bash
-curl https://aididai.cn/v1/embeddings \
+curl https://airider.cn/v1/embeddings \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -53,7 +53,7 @@ curl https://aididai.cn/v1/embeddings \
 ### cURL 示例（批量文本）
 
 ```bash
-curl https://aididai.cn/v1/embeddings \
+curl https://airider.cn/v1/embeddings \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -71,7 +71,7 @@ curl https://aididai.cn/v1/embeddings \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/embeddings"
+url = "https://airider.cn/v1/embeddings"
 headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer sk-xxxxxxxx"
@@ -120,7 +120,7 @@ print(f"前5个值: {embedding[:5]}")
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://aididai.cn/v1",
+    base_url="https://airider.cn/v1",
     api_key="sk-xxxxxxxx"
 )
 

@@ -18,10 +18,10 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Claude Messages 接口兼容 Anthropic 原生 Messages API 格式，可直接使用 Anthropic SDK 调用。支持 Claude 系列模型。
 
-**接口地址**：`POST https://aididai.cn/v1/messages`
+**接口地址**：`POST https://airider.cn/v1/messages`
 
 <Callout title="兼容性">
-  该接口兼容 Anthropic Messages API。可直接使用 `anthropic` Python SDK，只需将 `base_url` 修改为 `https://aididai.cn/v1`。
+  该接口兼容 Anthropic Messages API。可直接使用 `anthropic` Python SDK，只需将 `base_url` 修改为 `https://airider.cn/v1`。
 </Callout>
 
 ## 请求头
@@ -60,7 +60,7 @@ Claude Messages 接口兼容 Anthropic 原生 Messages API 格式，可直接使
 ### cURL 示例
 
 ```bash
-curl https://aididai.cn/v1/messages \
+curl https://airider.cn/v1/messages \
   -H "Content-Type: application/json" \
   -H "x-api-key: sk-xxxxxxxx" \
   -H "anthropic-version: 2023-06-01" \
@@ -80,7 +80,7 @@ curl https://aididai.cn/v1/messages \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/messages"
+url = "https://airider.cn/v1/messages"
 headers = {
     "Content-Type": "application/json",
     "x-api-key": "sk-xxxxxxxx",
@@ -128,7 +128,7 @@ print(response.json())
 from anthropic import Anthropic
 
 client = Anthropic(
-    base_url="https://aididai.cn/v1",
+    base_url="https://airider.cn/v1",
     api_key="sk-xxxxxxxx"
 )
 

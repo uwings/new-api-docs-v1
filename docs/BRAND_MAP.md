@@ -1,84 +1,105 @@
 # 品牌信息映射文档 (Brand Map)
 
-> 本文档记录 aididai.cn 公益文档站所有品牌引用位置及其处理方式。
-> 用于防止替换时遗漏，也便于未来从上游同步后重新替换。
+> 本文档记录 AI Rider 公益文档站所有品牌引用位置及处理方式。
+> 用于品牌替换时防止遗漏，也便于从上游同步后重新替换。
 
 ## 映射规则
 
-| 原始品牌 | 替换为 | 说明 |
-|----------|--------|------|
-| New API（平台名称） | AI Rider（公益站） | 指代公益站自身的场合 |
-| New API（软件名称） | New API（保留） | 描述上游开源软件的场合（技术文档） |
-| support@aididai.cn | uwings@gmail.com | 联系邮箱 |
-| QuantumNous（GitHub org） | 保留或移除 | 上游归属标注 |
-| aididai.cn（接口 URL） | 保留 | API 端点地址 |
+| 原始 | 替换为 | 适用场景 |
+|------|--------|---------|
+| New API（品牌指代公益站） | AI Rider | 首页、使用指南、首页卡片描述等 |
+| New API（软件名称） | New API（保留） | 技术文档：控制台操作、部署、Skills、致谢 |
+| `aididai.cn`（域名） | `airider.cn` | API 参考文档中的 URL 示例 |
+| `api.unsnow.org`（旧域名） | `airider.cn` | 快速开始、教程中的 URL 示例 |
+| `support@aididai.cn` / `newapi@quantumnous.com` | `uwings@gmail.com` | 联系邮箱 |
+| `New API Docs`（搜索） | `AI Rider Docs` | 搜索组件角色标签 |
 
-## 已处理文件清单
+## 品牌引用全量清单
 
-### 全局品牌文件 ✅
-| 文件 | 处理方式 |
-|------|----------|
-| `src/lib/layout.shared.tsx` | logo → airider, siteName → DOCS_SITE_NAME |
-| `src/app/[lang]/layout.tsx` | title template → DOCS_SITE_NAME 变量 |
-| `src/components/footer.tsx` | 版权 → AI Rider, 删除 GitHub icon, 邮箱 → uwings |
-| `src/components/compliance-notice.tsx` | 提示文字 → "AI Rider 提示" |
-| `src/lib/metadata.ts` | siteName → DOCS_SITE_NAME（待改） |
-| `src/lib/github.ts` | owner → uwings |
-| `src/app/[lang]/docs/[[...slug]]/page.tsx` | owner → uwings |
-| `src/app/[lang]/(home)/page.tsx` | QuantumNous URL → uwings |
-| `src/lib/llms.ts` | New API → DOCS_SITE_NAME（待改） |
-| `src/components/search.tsx` | "New API Docs" → 待改 |
-| `content/docs/zh/index.mdx` | "部署 New API" → 待改（首页 308 跳转、实际不渲染但代码残留） |
+### ✅ SRC 源代码
 
-### 使用指南 - 介绍部分 ✅
+| 文件 | 位置 | 处理 |
+|------|------|------|
+| `src/lib/layout.shared.tsx` | fallback siteName | `'New API'` → `'AI Rider'` |
+| `src/lib/metadata.ts` | OG url/siteName/images | → aididai.cn / DOCS_SITE_NAME / airider-logo |
+| `src/lib/llms.ts` | "# New API Docs" | → `DOCS_SITE_NAME` 动态 |
+| `src/components/search.tsx` | "New API Docs" role | → 'AI Rider Docs' |
+| `src/components/footer.tsx` | "New API" link | → "New API 开源" |
+| `src/app/[lang]/(home)/layout.tsx` | zh/en/ja "快速开始"描述 | → 公益站三步上手 / AI Rider 使い方 |
+| `src/components/antifraud-dialog.tsx` | New API 防诈骗弹窗 | ⚠️ 保留 (不可见组件) |
+| `src/components/qq-group-quiz.tsx` | New API QQ 群问答 | ⚠️ 保留 (不可见组件) |
+
+### ✅ 使用指南 (zh/guide/wiki)
+
+| 文件 | 原有 "New API" | 处理 |
+|------|---------------|------|
+| `project-introduction.mdx` | 全文 New API → AI Rider + 致谢保留 | ✅ 已改 |
+| `features-introduction.mdx` | 全文 → AI Rider | ✅ 已改 |
+| `technical-architecture.mdx` | 全文 → aididai.cn | ✅ 已改 |
+| `analytics-setup.mdx` | 全文 → aididai.cn | ✅ 已改 |
+| `performance-analysis.mdx` | 全文 → aididai.cn | ✅ 已改 |
+| `changelog.mdx` | → 公益站文档更新日志 | ✅ 已改 |
+| `project-records/changelog.mdx` | → 公益站文档更新日志 | ✅ 已改 |
+
+### ✅ 快速开始 (zh/public/getting-started)
+
 | 文件 | 状态 |
 |------|------|
-| `wiki/basic-concepts/project-introduction.mdx` | ✅ 已重写为 AI Rider 公益站介绍 |
-| `wiki/basic-concepts/features-introduction.mdx` | ✅ 已重写 |
-| `wiki/basic-concepts/technical-architecture.mdx` | ✅ 已重写 |
-| `wiki/basic-concepts/analytics-setup.mdx` | ✅ 已重写 |
-| `wiki/basic-concepts/performance-analysis.mdx` | ✅ 已重写 |
-| `wiki/changelog.mdx` | ✅ 已重写 |
-| `wiki/meta.json` | ✅ "维基百科"→"关于公益站" |
+| `index.mdx` | ✅ AI Rider 公益站 |
+| `introduction.mdx` | ✅ 已改写 |
+| `register-login.mdx` | ✅ 域名已改 |
+| `create-token.mdx` | ✅ 域名已改 |
+| `first-request.mdx` | ✅ api.unsnow.org → airider.cn |
+| `choose-model.mdx` | ✅ api.unsnow.org → airider.cn |
+| `quota-rate-limit.mdx` | ✅ |
+| `usage-rules.mdx` | ✅ |
+| `common-errors.mdx` | ✅ api.unsnow.org → airider.cn |
 
-### API 参考 ✅
-| 文件 | 状态 |
+### ✅ API 参考 (zh/api)
+
+| 范围 | 处理 |
 |------|------|
-| `api/index.mdx` | ✅ Base URL → aididai.cn/v1 |
-| `api/ai-model/**/*.mdx` (43 文件) | ✅ 全部改写为手写文档 |
+| 全部 `aididai.cn` → `airider.cn` (59处) | ✅ |
+| `api/index.mdx` Base URL + 描述 | ✅ |
 
-### 页脚 ✅
-| `src/components/footer.tsx` | ✅ 版权/AI Rider, 邮箱/uwings, 相关/友情链接已填充 |
+### ✅ 应用集成 (zh/apps)
 
-### ⚠️ 保留不处理（技术文档、不在导航显示）
+| 文件 | 处理 |
+|------|------|
+| `index.mdx:20` "New API 兼容" → "AI Rider 兼容" | ✅ |
 
-以下文件中的 "New API" 是对上游开源软件的技术文档描述，保留不替换：
-- `content/docs/zh/guide/console/**` — 控制台操作手册
-- `content/docs/zh/guide/feature-guide/admin/**` — 管理员功能指南
-- `content/docs/zh/guide/feature-guide/user/chat-apps.mdx` — 聊天应用集成指南
-- `content/docs/zh/installation/**` — New API 部署文档（导航已隐藏）
-- `content/docs/zh/business/**` — 商业合作页面（导航已隐藏）
-- `content/docs/zh/skills/**` — Skills 插件（导航已隐藏）
-- `content/docs/en/**` — 英文内容（未翻译、导航引用为主）
-- `content/docs/ja/**` — 日文内容（未翻译、导航引用为主）
-- `src/components/antifraud-dialog.tsx` — 防诈骗弹窗（触发条件未知、暂不动）
-- `src/components/qq-group-quiz.tsx` — QQ 群问答（不展示、不动）
+### ⚠️ 保留不处理（技术/软件文档）
 
-## ⚠️ 待修复
+以下页面中的 "New API" 是对上游开源软件的描述，保留：
+- `zh/guide/console/**` — New API 控制台操作手册
+- `zh/guide/feature-guide/admin/**` — New API 管理员功能
+- `zh/guide/feature-guide/user/chat-apps.mdx` — 聊天应用集成
+- `zh/installation/**` — New API 部署文档（导航隐藏）
+- `zh/business/**` — 商业合作（导航隐藏）
+- `zh/skills/**` — Skills 插件（导航隐藏）
+- `zh/support/**` — 社区支持（导航隐藏）
+- `en/**` / `ja/**` — 非中文内容
 
-| 文件 | 问题 | 处理方式 |
-|------|------|----------|
-| `src/lib/metadata.ts` | siteName: 'New API' 硬编码 | 改为读取 DOCS_SITE_NAME |
-| `src/lib/llms.ts` | "# New API Docs" 硬编码 | 改为读取 DOCS_SITE_NAME |
-| `src/components/search.tsx` | "New API Docs" | 改为动态读取 |
-| `src/app/[lang]/(home)/layout.tsx` | "部署和配置 New API" | 改为"创建 API 令牌并开始使用" |
-| `content/docs/zh/index.mdx` | "部署 New API" 卡片 | 改为公益站相关 |
-| `wiki/project-records/changelog.mdx` | QuantumNous release 内容 | 清理为公益站更新日志 |
+### ✅ 其他 public 内容
+
+| 文件 | 处理 |
+|------|------|
+| `public/ai-basics/*.mdx` | ✅ api.unsnow → airider.cn |
+| `public/agents/*.mdx` | ✅ api.unsnow → airider.cn |
+| `public/tools-clients/*.mdx` | ✅ api.unsnow → airider.cn |
+| `public/tutorials/*.mdx` | ✅ api.unsnow → airider.cn |
+
+## 域名替换汇总
+
+| 旧域名 | 新域名 | 影响文件数 |
+|--------|--------|----------|
+| `api.unsnow.org` | `airider.cn` | 12+ 文件 (28处) |
+| `aididai.cn` | `airider.cn` | 30+ 文件 (59处) |
 
 ## 邮箱映射
 
-| 旧邮箱 | 出现位置 | 处理 |
-|--------|---------|------|
-| support@aididai.cn | 已全部替换 | ✅ → uwings@gmail.com |
-| support@quantumnous.com | en/ja/zh 的 business + project-intro 旧页 | ⚠️ en/ja 未处理（不展示） |
-| newapi@quantumnous.com | en/ja 的 business 页 | ⚠️ 同上 |
+| 邮箱 | 处理 |
+|------|------|
+| `support@aididai.cn` | → uwings@gmail.com |
+| `newapi@quantumnous.com` | → 未处理（在隐藏页 en/ja 中） |
+| `support@quantumnous.com` | → 未处理（在隐藏页 en/ja 中） |

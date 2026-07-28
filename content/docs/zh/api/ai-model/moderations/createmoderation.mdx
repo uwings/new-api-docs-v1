@@ -16,7 +16,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Moderations 接口检查文本是否包含违规内容，如仇恨言论、暴力、色情、自残等内容类别。兼容 OpenAI Moderations API。
 
-**接口地址**：`POST https://aididai.cn/v1/moderations`
+**接口地址**：`POST https://airider.cn/v1/moderations`
 
 ## 请求参数
 
@@ -32,7 +32,7 @@ Moderations 接口检查文本是否包含违规内容，如仇恨言论、暴�
 ### cURL 示例
 
 ```bash
-curl https://aididai.cn/v1/moderations \
+curl https://airider.cn/v1/moderations \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -46,7 +46,7 @@ curl https://aididai.cn/v1/moderations \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/moderations"
+url = "https://airider.cn/v1/moderations"
 headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer sk-xxxxxxxx"
@@ -66,7 +66,7 @@ print(response.json())
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://aididai.cn/v1",
+    base_url="https://airider.cn/v1",
     api_key="sk-xxxxxxxx"
 )
 

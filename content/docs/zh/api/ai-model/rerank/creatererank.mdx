@@ -16,7 +16,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Rerank 接口根据查询（query）对一组文档进行语义相关性排序。常用于 RAG（检索增强生成）场景中，对初步检索到的文档进行精排，提升最终结果的相关性。
 
-**接口地址**：`POST https://aididai.cn/v1/rerank`
+**接口地址**：`POST https://airider.cn/v1/rerank`
 
 ## 请求参数
 
@@ -40,7 +40,7 @@ Rerank 接口根据查询（query）对一组文档进行语义相关性排序�
 ### cURL 示例
 
 ```bash
-curl https://aididai.cn/v1/rerank \
+curl https://airider.cn/v1/rerank \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -62,7 +62,7 @@ curl https://aididai.cn/v1/rerank \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/rerank"
+url = "https://airider.cn/v1/rerank"
 headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer sk-xxxxxxxx"
@@ -121,7 +121,7 @@ for item in result["results"]:
 ```python
 # 1. 向量检索：从知识库中召回候选文档
 from openai import OpenAI
-client = OpenAI(base_url="https://aididai.cn/v1", api_key="sk-xxxxxxxx")
+client = OpenAI(base_url="https://airider.cn/v1", api_key="sk-xxxxxxxx")
 
 query_embedding = client.embeddings.create(
     model="text-embedding-3-small",
@@ -134,7 +134,7 @@ candidates = vector_search(query_embedding, top_k=20)
 # 2. 重排序：用 Rerank 接口精排
 import requests
 rerank_response = requests.post(
-    "https://aididai.cn/v1/rerank",
+    "https://airider.cn/v1/rerank",
     headers={"Authorization": "Bearer sk-xxxxxxxx"},
     json={
         "model": "bge-reranker-v2-m3",

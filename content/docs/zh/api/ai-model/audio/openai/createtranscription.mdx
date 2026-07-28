@@ -16,7 +16,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 将音频文件转录为文本（Speech to Text）。支持多种音频格式，兼容 OpenAI Whisper API。
 
-**接口地址**：`POST https://aididai.cn/v1/audio/transcriptions`
+**接口地址**：`POST https://airider.cn/v1/audio/transcriptions`
 
 ## 请求参数
 
@@ -43,7 +43,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ### cURL 示例
 
 ```bash
-curl https://aididai.cn/v1/audio/transcriptions \
+curl https://airider.cn/v1/audio/transcriptions \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -F "file=@audio.mp3" \
   -F "model=whisper-1" \
@@ -56,7 +56,7 @@ curl https://aididai.cn/v1/audio/transcriptions \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/audio/transcriptions"
+url = "https://airider.cn/v1/audio/transcriptions"
 headers = {"Authorization": "Bearer sk-xxxxxxxx"}
 
 with open("audio.mp3", "rb") as audio_file:
@@ -75,7 +75,7 @@ with open("audio.mp3", "rb") as audio_file:
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://aididai.cn/v1",
+    base_url="https://airider.cn/v1",
     api_key="sk-xxxxxxxx"
 )
 

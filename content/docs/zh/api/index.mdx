@@ -1,6 +1,6 @@
 ---
 title: API 参考
-description: aididai.cn 公益 AI API 完整接口文档
+description: airider.cn 公益 AI API 完整接口文档
 ---
 
 import { Card, Cards } from 'fumadocs-ui/components/card';
@@ -21,10 +21,10 @@ import {
 
 ## 概述
 
-aididai.cn 公益站提供完整的 AI 能力 API 接口，完全兼容 OpenAI API 格式，方便开发者无缝切换。所有接口通过 HTTPS 调用，使用 Bearer Token 鉴权。
+airider.cn 公益站提供完整的 AI 能力 API 接口，完全兼容 OpenAI API 格式，方便开发者无缝切换。所有接口通过 HTTPS 调用，使用 Bearer Token 鉴权。
 
 <Callout title="基础信息">
-  - **Base URL**：`https://aididai.cn/v1`
+  - **Base URL**：`https://airider.cn/v1`
   - **鉴权方式**：在请求头中携带 `Authorization: Bearer sk-xxxxxxxx`
   - **联系邮箱**：uwings@gmail.com
   - **API Key 获取**：登录公益站后在控制台创建令牌即可获得
@@ -126,7 +126,7 @@ AI 模型接口提供各种 AI 能力的调用，兼容 OpenAI API 格式，同�
 以下是一个最简单的调用示例，使用 Chat Completions 接口与模型对话：
 
 ```bash
-curl https://aididai.cn/v1/chat/completions \
+curl https://airider.cn/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{

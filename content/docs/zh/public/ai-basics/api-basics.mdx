@@ -21,13 +21,13 @@ Base URL 就是你要发送请求的目标网址。所有 API 调用都发往这
 公益站的 Base URL：
 
 ```
-https://api.unsnow.org/v1
+https://airider.cn/v1
 ```
 
 后面拼上具体功能路径就是完整的请求地址。例如对话接口：
 
 ```
-https://api.unsnow.org/v1/chat/completions
+https://airider.cn/v1/chat/completions
 ```
 
 ## API Key（令牌/密钥）
@@ -45,7 +45,7 @@ API Key 通过 HTTP 请求头（Header）传递。以 curl 为例：
 ## 一个完整的请求长什么样
 
 ```bash
-curl https://api.unsnow.org/v1/chat/completions \
+curl https://airider.cn/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-你的令牌" \
   -d '{
@@ -56,7 +56,7 @@ curl https://api.unsnow.org/v1/chat/completions \
 
 拆解一下：
 
-- `https://api.unsnow.org/v1/chat/completions` → Base URL + 功能路径
+- `https://airider.cn/v1/chat/completions` → Base URL + 功能路径
 - `Content-Type: application/json` → 告诉服务器"我发的数据是 JSON 格式"
 - `Authorization: Bearer sk-...` → 带上你的 API Key
 - `{"model": "...", "messages": [...]}` → 请求的正文（JSON）

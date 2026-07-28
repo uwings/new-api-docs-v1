@@ -72,11 +72,8 @@ const i18nText: Record<
     title: { text: 'ドキュメント', desc: '' },
     apiDocs: { text: 'Apifox プレイグラウンド', desc: '' },
     skills: { text: 'Skills', desc: '' },
-    start: { text: 'はじめに', desc: 'New API のデプロイと設定方法を学ぶ。' },
-    install: {
-      text: 'インストール',
-      desc: '様々なデプロイ方法とインストールガイド。',
-    },
+    start: { text: 'はじめに', desc: 'AI Rider の使い方を学ぶ。' },
+    install: { text: 'インストール', desc: 'さまざまなデプロイ方法とインストールガイド。' },
     support: {
       text: 'ヘルプ＆サポート',
       desc: 'よくある質問とコミュニティサポート。',

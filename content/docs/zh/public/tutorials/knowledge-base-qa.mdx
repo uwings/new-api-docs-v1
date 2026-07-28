@@ -46,7 +46,7 @@ import numpy as np
 def get_embedding(text):
     """把文字转成向量"""
     resp = requests.post(
-        "https://api.unsnow.org/v1/embeddings",
+        "https://airider.cn/v1/embeddings",
         headers={"Authorization": "Bearer sk-你的令牌"},
         json={"model": "text-embedding-3-small", "input": text}
     )
@@ -76,7 +76,7 @@ def ask(question):
 
     # 3. 让 AI 基于文档回答
     resp = requests.post(
-        "https://api.unsnow.org/v1/chat/completions",
+        "https://airider.cn/v1/chat/completions",
         headers={"Authorization": "Bearer sk-你的令牌"},
         json={
             "model": "gpt-3.5-turbo",

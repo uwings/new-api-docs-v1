@@ -16,7 +16,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Completions 是传统的文本补全接口，给定一段文本前缀，模型续写后续内容。这是 OpenAI 早期的核心接口，适用于纯文本续写、代码生成等无对话上下文的场景。
 
-**接口地址**：`POST https://aididai.cn/v1/completions`
+**接口地址**：`POST https://airider.cn/v1/completions`
 
 ## 请求参数
 
@@ -45,7 +45,7 @@ Completions 是传统的文本补全接口，给定一段文本前缀，模型�
 ### cURL 示例
 
 ```bash
-curl https://aididai.cn/v1/completions \
+curl https://airider.cn/v1/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -62,7 +62,7 @@ curl https://aididai.cn/v1/completions \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/completions"
+url = "https://airider.cn/v1/completions"
 headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer sk-xxxxxxxx"

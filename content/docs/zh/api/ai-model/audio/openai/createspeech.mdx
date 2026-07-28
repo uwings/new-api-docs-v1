@@ -16,7 +16,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 将文本转换为自然语音的音频文件。支持多种音色和输出格式，兼容 OpenAI Text-to-Speech API。
 
-**接口地址**：`POST https://aididai.cn/v1/audio/speech`
+**接口地址**：`POST https://airider.cn/v1/audio/speech`
 
 ## 请求参数
 
@@ -40,7 +40,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 ### cURL 示例
 
 ```bash
-curl https://aididai.cn/v1/audio/speech \
+curl https://airider.cn/v1/audio/speech \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-xxxxxxxx" \
   -d '{
@@ -57,7 +57,7 @@ curl https://aididai.cn/v1/audio/speech \
 ```python
 import requests
 
-url = "https://aididai.cn/v1/audio/speech"
+url = "https://airider.cn/v1/audio/speech"
 headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer sk-xxxxxxxx"
@@ -82,7 +82,7 @@ print("音频已保存为 speech.mp3")
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://aididai.cn/v1",
+    base_url="https://airider.cn/v1",
     api_key="sk-xxxxxxxx"
 )
 
