@@ -1,191 +1,86 @@
 ---
-title: 分析工具设置指南
+title: 服务状态与可用性
+description: 公益站的可用性说明、维护安排以及如何了解服务状态
 ---
 
-### 概述
+import { Callout, Steps } from 'fumadocs-ui/components';
 
-New API 现在支持与流行的分析平台集成，帮助你追踪用户行为和网站性能：
+## 关于可用性
 
-- **Google Analytics 4 (GA4)**：谷歌分析平台的最新版本
-- **Umami Analytics**：注重隐私的开源分析工具
+aididai.cn 是公益性质的平台，**不承诺 99.99% 或任何级别的服务可用性**。
 
-两种分析工具可以同时启用，互不冲突。
+<Callout type="warn" title="重要提醒">
+  本站由个人维护，服务器和上游 API 均可能出现计划外中断。如果你的项目对可用性有要求，请不要依赖本站作为唯一 API 来源。
+</Callout>
 
-### 功能特点
+可能影响可用性的因素：
 
-✅ 零代码集成 - 仅通过环境变量配置  
-✅ 自动注入脚本到 Web 界面  
-✅ 支持 Docker 和独立部署  
-✅ 注重隐私的实现方式  
-✅ 无需修改前端代码
+| 因素 | 说明 | 你能做的 |
+|------|------|---------|
+| 服务器维护 | 维护者需要更新、重启服务 | 避开维护时段使用 |
+| 上游服务商中断 | OpenAI、Anthropic 等自身故障 | 切换到其他可用模型 |
+| 额度耗尽 | 平台每日免费额度有限 | 上午调用，避免高峰 |
+| 网络波动 | 服务器或上游的网络抖动 | 重试请求 |
+| 不可抗力 | 服务器故障、域名/网络问题 | 等待恢复或使用备用方案 |
 
----
+## 维护安排
 
-### Google Analytics 4 设置
+平台可能不定期进行维护操作，包括但不限于：
 
-#### 1. 获取你的测量 ID
+- 更新平台版本
+- 添加或下线模型
+- 修复已知问题
+- 调整额度策略
 
-1. 访问 [Google Analytics](https://analytics.google.com/)
-2. 创建新的媒体资源或选择现有的
-3. 进入 **管理** → **数据流**
-4. 创建或选择一个网站数据流
-5. 复制你的 **测量 ID**（格式：`G-XXXXXXXXXX`）
+<Callout type="info">
+  维护前会尽量通过公告或邮件通知用户，但不保证提前通知所有变更。
+</Callout>
 
-#### 2. 配置环境变量
+## 如何了解服务状态
 
-**使用 Docker Compose：**
+如果遇到 API 调用异常，请按以下步骤排查：
 
-编辑 `docker-compose.yml` 文件，取消注释 Google Analytics 行：
+<Steps>
+  <Step title="检查额度">
+    登录控制台，确认你的每日剩余额度是否充足。
+    额度耗尽是最常见的调用失败原因。
+  </Step>
+  <Step title="检查模型是否可用">
+    调用 `GET /v1/models` 查看当前可用模型列表。
+    某些模型可能已下线。
+  </Step>
+  <Step title="查看错误信息">
+    API 返回的 JSON 错误信息中包含具体原因，
+    例如 `rate_limit_exceeded`、`insufficient_quota` 等。
+  </Step>
+  <Step title="等待并重试">
+    如果是临时性问题（网络波动、上游瞬时故障），
+    等待几分钟后再试通常可以解决。
+  </Step>
+  <Step title="联系反馈">
+    如果问题持续存在且不属于已知限制，
+    请发送邮件至 support@aididai.cn 描述问题。
+  </Step>
+</Steps>
 
-```yaml
-environment:
-  - GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX # 替换为你的实际测量 ID
-```
+## 关于数据持久性
 
-**独立部署：**
+<Callout type="error" title="不保证数据安全">
+  公益站不保证用户数据的持久性和安全性。请不要在 API 请求中包含敏感个人信息、商业机密或重要数据。平台可能在任何时候重置数据库或下线服务。
+</Callout>
 
-添加到 `.env` 文件或设置为环境变量：
+你需要注意：
 
-```bash
-export GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
-```
+- **调用记录**：仅保留近期数据，不保证长期存储
+- **令牌安全**：妥善保管你的 API Key，泄露后请立即删除并重建
+- **重要对话**：如果对话内容有价值，请自行保存，不要依赖平台
 
-**使用 Docker Run：**
+## 长期规划
 
-```bash
-docker run -d \
-  -e GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX \
-  ...其他选项...
-  calciumion/new-api:latest
-```
+公益站没有明确的长期运营承诺。维护者会尽力持续运营，但以下情况可能导致服务终止：
 
-#### 3. 重启应用
+- 成本无法承担
+- 时间精力不足
+- 政策或法律原因
 
-```bash
-# Docker Compose
-docker-compose down && docker-compose up -d
-
-# 独立部署
-# 直接重启你的应用程序
-```
-
----
-
-### Umami Analytics 设置
-
-#### 1. 获取 Umami 凭据
-
-**选项 A：使用 Umami Cloud**
-
-1. 在 [Umami Cloud](https://cloud.umami.is/) 注册
-2. 添加一个新网站
-3. 复制你的 **网站 ID**（UUID 格式）
-
-**选项 B：自托管 Umami**
-
-1. 部署你自己的 [Umami 实例](https://umami.is/docs/install)
-2. 在仪表板中创建网站
-3. 复制你的 **网站 ID** 和 **脚本 URL**
-
-#### 2. 配置环境变量
-
-**使用 Docker Compose：**
-
-编辑 `docker-compose.yml` 文件：
-
-```yaml
-environment:
-  - UMAMI_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-  # 可选：仅自托管实例需要
-  - UMAMI_SCRIPT_URL=https://<your-umami-domain>/script.js
-```
-
-**独立部署：**
-
-添加到 `.env` 文件：
-
-```bash
-export UMAMI_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-export UMAMI_SCRIPT_URL=https://<your-umami-domain>/script.js  # 可选
-```
-
-**注意：** 如果使用 Umami Cloud，不需要设置 `UMAMI_SCRIPT_URL`，因为它默认使用官方 URL。
-
-#### 3. 重启应用
-
-与 Google Analytics 相同 - 重启应用以应用更改。
-
----
-
-### 同时使用两种分析工具
-
-你可以同时启用 Google Analytics 和 Umami：
-
-```yaml
-environment:
-  - GOOGLE_ANALYTICS_ID=G-ABC123XYZ
-  - UMAMI_WEBSITE_ID=a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6
-  - UMAMI_SCRIPT_URL=https://analytics.umami.is/script.js
-```
-
----
-
-### 验证
-
-重启应用后：
-
-1. 在浏览器中打开 Web 界面
-2. 打开浏览器开发者工具（F12）→ **网络**标签
-3. 刷新页面
-4. 查找以下请求：
-   - Google Analytics：`https://www.googletagmanager.com/gtag/js`
-   - Umami：你配置的脚本 URL
-
-你也可以查看页面源代码，在 `<head>` 部分查找注入的脚本。
-
----
-
-### 故障排除
-
-**分析工具无法工作？**
-
-1. ✅ 验证环境变量设置正确
-2. ✅ 更改变量后重启应用
-3. ✅ 检查浏览器控制台错误
-4. ✅ 确保测量 ID/网站 ID 格式正确
-5. ✅ 检查广告拦截器是否干扰
-
-**Docker 用户：**
-
-```bash
-# 检查环境变量是否设置
-docker exec new-api env | grep -E "GOOGLE_ANALYTICS|UMAMI"
-```
-
----
-
-### 隐私考虑
-
-- Google Analytics 根据[谷歌隐私政策](https://policies.google.com/privacy)收集用户数据
-- Umami 注重隐私，不收集个人数据
-- 如果使用分析工具，请考虑在网站上添加隐私政策
-- 两种工具在正确配置时都符合 GDPR 要求
-
----
-
-## 环境变量参考
-
-| 变量                  | 必需 | 默认值                                 | 说明                                             |
-| --------------------- | ---- | -------------------------------------- | ------------------------------------------------ |
-| `GOOGLE_ANALYTICS_ID` | 否   | -                                      | Google Analytics 4 测量 ID（格式：G-XXXXXXXXXX） |
-| `UMAMI_WEBSITE_ID`    | 否   | -                                      | Umami 网站 ID（UUID 格式）                       |
-| `UMAMI_SCRIPT_URL`    | 否   | `https://analytics.umami.is/script.js` | Umami 脚本 URL（仅自托管需要）                   |
-
----
-
-## 相关链接
-
-- [Google Analytics](https://analytics.google.com/)
-- [Umami Analytics](https://umami.is/)
-- [Umami Documentation](https://umami.is/docs)
-- [Google Analytics Privacy](https://support.google.com/analytics/answer/6004245)
+建议始终保留迁移到付费平台的能力，将本站视为临时、辅助性质的资源。

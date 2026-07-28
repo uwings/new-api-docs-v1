@@ -1,6 +1,6 @@
 {
-  "title": "维基百科",
-  "description": "New API 项目文档与基础知识",
+  "title": "关于公益站",
+  "description": "了解 aididai.cn 公益 AI API 平台",
   "icon": "BookOpen",
   "pages": ["basic-concepts", "project-records"]
 }

@@ -1,5 +1,5 @@
 ---
-title: ChatCompletions格式
+title: Chat Completions
 full: true
 _openapi:
   method: POST
@@ -13,11 +13,196 @@ _openapi:
           兼容 OpenAI Chat Completions API。
 ---
 
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## 概述
+
+Chat Completions 是最核心的接口，用于与 AI 模型进行对话交互。兼容 OpenAI Chat Completions API 格式。
+
+**接口地址**：`POST https://aididai.cn/v1/chat/completions`
+
+<Callout title="兼容性">
+  该接口完全兼容 OpenAI Chat Completions API，可直接使用 OpenAI SDK、LangChain、LiteLLM 等工具库调用。只需将 `base_url` 设置为 `https://aididai.cn/v1` 即可无缝切换。
+</Callout>
+
+## 请求参数
+
+### 必需参数
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `model` | string | 使用的模型 ID。如 `gpt-4o-mini`、`claude-3.5-sonnet`、`deepseek-chat` 等。可通过模型列表接口获取可用模型。 |
+| `messages` | array | 对话消息列表，按时间顺序排列。每个消息包含 `role` 和 `content` 字段。 |
+
+### messages 消息结构
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `role` | string | 消息角色：`system`（系统提示）、`user`（用户）、`assistant`（助手）、`tool`（工具调用结果） |
+| `content` | string \| array | 消息内容。纯文本时传字符串；多模态（图片、文件）时传数组。 |
+
+### 可选参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `temperature` | number | 1 | 采样温度，0-2 之间。值越高输出越随机，越低越确定。 |
+| `max_tokens` | integer | — | 生成的最大 token 数。不传则由模型决定。 |
+| `top_p` | number | 1 | 核采样参数，0-1 之间。0.1 表示只考虑概率前 10% 的 token。 |
+| `stream` | boolean | false | 是否启用流式输出。流式输出采用 SSE（Server-Sent Events）协议。 |
+| `frequency_penalty` | number | 0 | 频率惩罚，-2.0 到 2.0。正值降低重复词的概率。 |
+| `presence_penalty` | number | 0 | 存在惩罚，-2.0 到 2.0。正值增加新话题的概率。 |
+| `stop` | string \| array | — | 停止词。当生成到该词时自动停止。 |
+| `n` | integer | 1 | 为每个输入消息生成的回复数量。 |
+| `tools` | array | — | 模型可调用的工具列表（Function Calling）。 |
+| `tool_choice` | string \| object | — | 控制工具调用的行为：`auto`、`none`、`required` 或指定工具。 |
+
+## 请求示例
+
+### cURL 示例
+
+```bash
+curl https://aididai.cn/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-xxxxxxxx" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [
+      {"role": "system", "content": "你是一个乐于助人的助手。"},
+      {"role": "user", "content": "请用一句话介绍杭州西湖。"}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 200,
+    "stream": false
+  }'
+```
+
+### Python 示例
+
+```python
+import requests
+
+url = "https://aididai.cn/v1/chat/completions"
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer sk-xxxxxxxx"
+}
+data = {
+    "model": "gpt-4o-mini",
+    "messages": [
+        {"role": "system", "content": "你是一个乐于助人的助手。"},
+        {"role": "user", "content": "请用一句话介绍杭州西湖。"}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 200
+}
+
+response = requests.post(url, json=data, headers=headers)
+print(response.json())
+```
+
+## 响应示例
+
+### 非流式响应
+
+```json
+{
+  "id": "chatcmpl-abc123def456",
+  "object": "chat.completion",
+  "created": 1710000000,
+  "model": "gpt-4o-mini",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "杭州西湖是中国最著名的淡水湖之一，以「西湖十景」闻名于世。"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 30,
+    "completion_tokens": 25,
+    "total_tokens": 55
+  }
+}
+```
+
+### 流式响应（SSE）
+
+设置 `"stream": true` 后，服务器将以 SSE 格式持续返回数据块：
+
+```
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1710000000,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1710000000,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"杭州"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1710000000,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"西湖"},"finish_reason":null}]}
+
+...
+
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1710000000,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
+
+data: [DONE]
+```
+
+### 流式调用 Python 示例
+
+```python
+import requests
+import json
+
+url = "https://aididai.cn/v1/chat/completions"
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer sk-xxxxxxxx"
+}
+data = {
+    "model": "gpt-4o-mini",
+    "messages": [
+        {"role": "user", "content": "讲一个简短的笑话"}
+    ],
+    "stream": True
+}
+
+with requests.post(url, json=data, headers=headers, stream=True) as r:
+    for line in r.iter_lines():
+        if line:
+            line = line.decode("utf-8")
+            if line.startswith("data: ") and line[6:] != "[DONE]":
+                chunk = json.loads(line[6:])
+                content = chunk["choices"][0]["delta"].get("content", "")
+                if content:
+                    print(content, end="", flush=True)
+```
+
+## 使用 OpenAI SDK 调用
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://aididai.cn/v1",
+    api_key="sk-xxxxxxxx"
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": "你是一个乐于助人的助手。"},
+        {"role": "user", "content": "你好！"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+<Callout type="warn" title="注意事项">
+  - 不同模型支持的参数可能不同，建议先查看模型列表确认可用模型。
+  - 流式输出时应正确处理 SSE 事件，注意 `[DONE]` 结束标记。
+  - 公益站资源有限，长时间无回应的请求可能会被超时断开。
+</Callout>
+
 {/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
-
-根据对话历史创建模型响应。支持流式和非流式响应。
-
-兼容 OpenAI Chat Completions API。
-
 
 <APIPage document={"openapi/generated/ai-model/聊天（Chat）/原生OpenAI格式/post-v1-chat-completions-createchatcompletion-383826473.json"} operations={[{"path":"/v1/chat/completions","method":"post"}]} />

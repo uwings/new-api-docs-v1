@@ -1,131 +1,109 @@
 ---
-title: 性能分析设置指南
+title: 常见问题与限制
+description: 公益站的速率限制、请求大小限制、并发限制和每日额度说明
 ---
 
-### 概述
+import { Callout, Steps } from 'fumadocs-ui/components';
 
-New API 提供两类性能分析能力：
+## 速率限制
 
-- **pprof（内置）**：适合临时诊断与离线分析
-- **Pyroscope（可选）**：适合线上持续分析与火焰图可视化
+公益站对 API 调用频率有上限，防止单个用户占用过多资源。
 
-两者可以同时启用，互不冲突。
+| 限制类型 | 说明 |
+|---------|------|
+| 每分钟请求数 | 平台根据负载动态设定，通常每分钟几十次 |
+| 并发请求数 | 同一令牌同时进行的请求数有上限 |
+| 每日额度 | 每个用户每天有 Token 消耗上限，次日重置 |
 
-### 功能特点
+<Callout type="warn" title="429 错误">
+  如果你收到 `429 Too Many Requests` 错误，说明触发了速率限制。请降低调用频率，等待一段时间后重试。
+</Callout>
 
-✅ 零代码集成 - 仅通过环境变量配置  
-✅ 支持 Docker 和独立部署  
-✅ 支持临时诊断与持续分析并存  
-✅ 可选鉴权与实例区分
+### 如何避免触发限流
 
----
+<Steps>
+  <Step title="控制请求频率">
+    在代码中加入合理的请求间隔，避免短时间内密集调用。
+    建议单用户每秒不超过 2-3 次请求。
+  </Step>
+  <Step title="合并请求">
+    如果有多个独立调用，考虑合并到一次多轮对话中，
+    减少 API 调用次数。
+  </Step>
+  <Step title="使用缓存">
+    对于相同输入的请求，在本地缓存结果，
+    避免重复调用。
+  </Step>
+  <Step title="实现指数退避">
+    遇到 429 错误时，等待 1 秒后重试，再失败等待 2 秒、4 秒、8 秒……
+    而不是立即重试。
+  </Step>
+</Steps>
 
-### pprof（内置）设置
+## 单次请求大小限制
 
-#### 1. 配置环境变量
+| 限制项 | 说明 |
+|-------|------|
+| 请求体大小 | 单次请求的总大小有上限，通常包含输入和输出 |
+| 输入 Token | 单次请求的输入（prompt）Token 数受模型上下文窗口限制 |
+| 输出 Token | `max_tokens` 参数不能超过模型允许的最大值 |
 
-**使用 Docker Compose：**
+如果你发送大量文本作为上下文，可能触发以下错误：
 
-```yaml
-environment:
-  - ENABLE_PPROF=true
-```
+- `context_length_exceeded` — 输入超过模型的上下文窗口
+- `payload_too_large` — 请求体超过平台限制
 
-**独立部署：**
+### 建议
 
-```bash
-export ENABLE_PPROF=true
-```
+- 长文本请分段处理，不要一次性发送整个文档
+- 使用摘要或向量检索减少上下文长度
+- 设置合理的 `max_tokens`，避免等待过长响应
 
-#### 2. 重启应用
+## 并发限制
 
-重启应用以应用更改。
+同一用户的同时进行中的请求数有上限。如果你使用多线程或异步方式调用 API：
 
-#### 3. 验证
+- 建议并发数不超过 **3-5**
+- 并发过高会被网关拒绝，返回 429 错误
+- 流式请求在完成前持续占用并发槽位
 
-如果未修改路由，通常可在 `/debug/pprof/` 访问（以实际部署为准）。
+## 每日额度
 
----
+每个用户每天有 Token 消耗上限，这是公益站最核心的限制。
 
-### Pyroscope 设置
+<Callout type="info" title="额度如何计算">
+  额度按 Token 折算。不同模型的消耗比例不同：
+  - GPT-4 系列消耗快，单次对话可能用掉当天大部分额度
+  - GPT-3.5 / DeepSeek 等模型消耗慢，可以进行更多次调用
+  - 具体倍率可能在控制台的模型价格页面查看
+</Callout>
 
-#### 1. 准备 Pyroscope 服务
+额度耗尽时你会收到 `insufficient_quota` 错误。额度在每天固定时间重置。
 
-确保 Pyroscope 服务可访问，并记录服务地址（例如：`http://localhost:4040`）。
+## 常见错误一览
 
-#### 2. 配置环境变量
+| 错误码 | 含义 | 解决方法 |
+|-------|------|---------|
+| 401 | API Key 无效或已过期 | 检查令牌是否正确、是否已禁用 |
+| 403 | 无权访问该模型 | 检查令牌是否限制了模型范围 |
+| 429 | 请求过频或额度不足 | 降低频率或等待次日额度刷新 |
+| 500 | 服务器内部错误 | 稍后重试 |
+| 502 / 503 | 上游服务商不可用 | 换一个模型或稍后重试 |
+| 504 | 请求超时 | 检查输入是否过大，或重试 |
 
-**使用 Docker Compose：**
+## 合理使用建议
 
-```yaml
-environment:
-  - PYROSCOPE_URL=http://localhost:4040
-  - PYROSCOPE_APP_NAME=new-api
-  - PYROSCOPE_BASIC_AUTH_USER=your-user
-  - PYROSCOPE_BASIC_AUTH_PASSWORD=your-password
-  - PYROSCOPE_MUTEX_RATE=5
-  - PYROSCOPE_BLOCK_RATE=5
-  - HOSTNAME=your-hostname
-```
+<Callout type="info" title="做一个好用户">
+  公益站资源有限，合理使用让所有人都能受益。
+</Callout>
 
-**独立部署：**
+- ✅ 用于学习、实验、个人项目
+- ✅ 控制调用频率，不并发刷量
+- ✅ 用国产模型做日常测试，省下额度给关键调用
+- ✅ 遇到问题先查文档再问
+- ❌ 不要用于商业服务或线上产品
+- ❌ 不要搭建转发代理二次转售
+- ❌ 不要用脚本无限制轮询
+- ❌ 不要在请求中发送敏感数据
 
-```bash
-export PYROSCOPE_URL=http://localhost:4040
-export PYROSCOPE_APP_NAME=new-api
-export PYROSCOPE_BASIC_AUTH_USER=your-user
-export PYROSCOPE_BASIC_AUTH_PASSWORD=your-password
-export PYROSCOPE_MUTEX_RATE=5
-export PYROSCOPE_BLOCK_RATE=5
-export HOSTNAME=your-hostname
-```
-
-#### 3. 重启应用
-
-重启应用以应用更改。
-
-#### 4. 验证
-
-1. 打开 Pyroscope UI
-2. 选择 `PYROSCOPE_APP_NAME` 对应的应用
-3. 如设置了 `HOSTNAME`，可在实例维度区分来源
-
----
-
-### 故障排除
-
-**性能分析无法工作？**
-
-1. ✅ 验证环境变量设置正确
-2. ✅ 更改变量后重启应用
-3. ✅ 检查网络连通性与鉴权配置
-4. ✅ 确认 `PYROSCOPE_APP_NAME` 命名一致
-
-**Docker 用户：**
-
-```bash
-# Check env vars
-docker exec new-api env | grep -E "PPROF|PYROSCOPE"
-```
-
----
-
-## 环境变量参考
-
-| 变量                          | 必需 | 默认值 | 说明                         |
-| ----------------------------- | ---- | ------ | ---------------------------- |
-| `ENABLE_PPROF`                | 否   | `false` | 启用 pprof 性能分析           |
-| `PYROSCOPE_URL`               | 否   | -      | Pyroscope 服务地址           |
-| `PYROSCOPE_APP_NAME`          | 否   | -      | Pyroscope 应用标识           |
-| `PYROSCOPE_BASIC_AUTH_USER`   | 否   | -      | Pyroscope Basic Auth 用户名  |
-| `PYROSCOPE_BASIC_AUTH_PASSWORD` | 否 | -      | Pyroscope Basic Auth 密码    |
-| `PYROSCOPE_MUTEX_RATE`        | 否   | -      | Mutex 采样率                 |
-| `PYROSCOPE_BLOCK_RATE`        | 否   | -      | Block 采样率                 |
-| `HOSTNAME`                    | 否   | -      | 实例标识（可选）             |
-
----
-
-## 相关链接
-
-- [Pyroscope](https://pyroscope.io/)
-- [Pyroscope Documentation](https://pyroscope.io/docs/)
+如有疑问，请邮件联系 support@aididai.cn。
