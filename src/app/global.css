@@ -89,3 +89,10 @@ body {
   margin-top: 0;
   margin-bottom: 0;
 }
+
+/* Compliance notice: only occupy content area, not the right-side TOC */
+@media (min-width: 1280px) {
+  .compliance-notice {
+    margin-right: var(--fd-toc-width, 240px);
+  }
+}

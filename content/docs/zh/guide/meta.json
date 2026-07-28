@@ -14,7 +14,6 @@
     "wiki/changelog",
     "---功能指南---",
     "feature-guide/index",
-    "feature-guide/user",
-    "feature-guide/admin"
+    "feature-guide/user"
   ]
 }

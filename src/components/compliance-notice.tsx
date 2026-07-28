@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
-
 export function ComplianceNotice({ lang }: { lang: string }) {
   if (lang !== 'zh') return null;
 
   return (
-    <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200 xl:mr-(--fd-toc-width)">
+    <div
+      className="compliance-notice border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+    >
       <div className="flex items-start gap-2">
         <span className="shrink-0">⚠️</span>
         <span className="min-w-0 whitespace-normal break-words">
