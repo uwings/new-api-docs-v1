@@ -24,7 +24,7 @@ const contentMap: Record<
     highlight: string;
     getStarted: string;
     github: string;
-    atomgit: string;
+    github2: string;
     partnersTitle: string;
     partnersSubtitle: string;
     sponsorPartnersTitle: string;
@@ -40,7 +40,7 @@ const contentMap: Record<
     highlight: 'future',
     getStarted: 'Getting Started',
     github: 'GitHub',
-    atomgit: 'AtomGit',
+    github2: 'GitHub',
     partnersTitle: 'Our Partners & Clients',
     partnersSubtitle: 'In no particular order',
     sponsorPartnersTitle: 'Sponsor Partners',
@@ -55,7 +55,7 @@ const contentMap: Record<
     highlight: '未来',
     getStarted: '快速开始',
     github: 'GitHub',
-    atomgit: 'AtomGit',
+    github2: 'GitHub',
     partnersTitle: '我们的合作伙伴与客户',
     partnersSubtitle: '排名不分先后',
     sponsorPartnersTitle: '赞助合作伙伴',
@@ -70,7 +70,7 @@ const contentMap: Record<
     highlight: '未来を構築',
     getStarted: 'はじめに',
     github: 'GitHub',
-    atomgit: 'AtomGit',
+    github2: 'GitHub',
     partnersTitle: '私たちのパートナーとお客様',
     partnersSubtitle: '順不同',
     sponsorPartnersTitle: 'スポンサーパートナー',
@@ -158,7 +158,7 @@ export default async function Page({
               {content.getStarted}
             </Link>
             <a
-              href="https://github.com/QuantumNous/new-api"
+              href="https://github.com/uwings/new-api-docs-v1"
               target="_blank"
               rel="noreferrer noopener"
               className="bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
@@ -167,13 +167,13 @@ export default async function Page({
               {content.github}
             </a>
             <a
-              href="https://atomgit.com/QuantumNous/new-api"
+              href="https://github.com/uwings/new-api-docs-v1"
               target="_blank"
               rel="noreferrer noopener"
               className="bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
             >
-              <AtomGitIcon />
-              {content.atomgit}
+              <Github className="size-5" />
+              
             </a>
           </div>
         </div>
@@ -254,12 +254,12 @@ export default async function Page({
         </h2>
         <div className="mt-8 flex justify-center">
           <a
-            href="https://github.com/QuantumNous/new-api/graphs/contributors"
+            href="https://github.com/uwings/new-api-docs-v1/graphs/contributors"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img
-              src="https://contrib.rocks/image?repo=QuantumNous/new-api"
+              src="https://contrib.rocks/image?repo=uwings/new-api-docs-v1"
               alt="Development Contributors"
               loading="lazy"
               decoding="async"
@@ -276,12 +276,12 @@ export default async function Page({
         </h2>
         <div className="mt-8 flex justify-center">
           <a
-            href="https://github.com/QuantumNous/new-api-docs-v1/graphs/contributors"
+            href="https://github.com/uwings/new-api-docs-v1/graphs/contributors"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img
-              src="https://contrib.rocks/image?repo=QuantumNous/new-api-docs-v1"
+              src="https://contrib.rocks/image?repo=uwings/new-api-docs-v1-docs-v1"
               alt="Documentation Contributors"
               loading="lazy"
               decoding="async"

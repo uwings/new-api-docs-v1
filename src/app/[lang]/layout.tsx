@@ -90,9 +90,9 @@ export async function generateMetadata({
       'Intelligent API Management',
     ],
     authors: [
-      { name: 'New API Team', url: 'https://github.com/QuantumNous/new-api' },
+      { name: 'uwings', url: 'https://github.com/uwings' },
     ],
-    creator: 'New API Team',
+    creator: 'uwings',
     alternates: {
       languages: {
         en: '/en',
