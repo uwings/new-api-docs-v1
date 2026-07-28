@@ -657,7 +657,13 @@ async function processFiles(
 // ============================================================================
 
 async function translateDocs(specificPaths?: string[]) {
-  assertOpenAIKey();
+  // Gracefully skip translation when OPENAI_API_KEY is not set
+  // This is a public welfare project — translation is optional, not required
+  if (!OPENAI_API_KEY) {
+    console.log('ℹ OPENAI_API_KEY not set — skipping translation (graceful skip).');
+    console.log('  Set OPENAI_API_KEY in GitHub Secrets to enable automatic translation.');
+    return;
+  }
   console.log('═══════════════════════════════════════════════');
   console.log('🌐 Starting document translation...');
   console.log('═══════════════════════════════════════════════\n');
