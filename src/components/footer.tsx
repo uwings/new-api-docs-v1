@@ -27,7 +27,7 @@ const relatedProjects: { label: string; href: string }[] = [
 // Friendship links — AI communities and resources
 const friendshipLinks: { label: string; href: string }[] = [
   { label: 'AI 地带', href: 'https://aididai.cn' },
-  { label: 'AICC 社区', href: 'https://aicc.pro' },
+  { label: '社区论坛', href: 'https://BBS.UXlib.CN' },
 ];
 
 // ============================================
