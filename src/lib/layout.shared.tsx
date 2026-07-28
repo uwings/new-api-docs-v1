@@ -18,8 +18,8 @@ export const linkItems: LinkItemType[] = [
 
 export const logo = (
   <Image
-    alt="New API"
-    src="/assets/newapi.svg"
+    alt="AI Rider"
+    src="/assets/airider-logo-small.svg"
     width={20}
     height={20}
     className="size-5"

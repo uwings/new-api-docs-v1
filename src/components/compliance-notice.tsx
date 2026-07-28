@@ -10,7 +10,7 @@ export function ComplianceNotice({ lang }: { lang: string }) {
       <div className="flex items-start gap-2">
         <span className="shrink-0">⚠️</span>
         <span className="min-w-0 whitespace-normal break-words">
-          公益站提示：本站仅供 AI 学习与体验，我们会尽力保持服务稳定，但不承诺持续可用。请勿滥用、转售或用于违法用途，避免提交隐私及其他敏感信息。
+          AI Rider 提示：本站由个人爱好者维护，尽量保证可用但不承诺稳定。仅供 AI 学习与体验，商用请选择付费 API。请勿滥用、转售或提交敏感信息。
         </span>
       </div>
     </div>

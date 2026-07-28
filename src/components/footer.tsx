@@ -80,7 +80,7 @@ const translations: Record<string, FooterTranslation> = {
       relatedProjects: '相关项目',
       friendshipLinks: '友情链接',
     },
-    copyright: '© 2026 公益 AI 文档站. All Rights Reserved.',
+    copyright: '© 2026 AI Rider. All Rights Reserved.',
   },
   en: {
     sections: {
@@ -98,7 +98,7 @@ const translations: Record<string, FooterTranslation> = {
       relatedProjects: 'Related Projects',
       friendshipLinks: 'Friendship Links',
     },
-    copyright: '© 2026 Public AI Docs. All Rights Reserved.',
+    copyright: '© 2026 AI Rider. All Rights Reserved.',
   },
   ja: {
     sections: {
@@ -116,7 +116,7 @@ const translations: Record<string, FooterTranslation> = {
       relatedProjects: '関連プロジェクト',
       friendshipLinks: '友好リンク',
     },
-    copyright: '© 2026 Public AI Docs. All Rights Reserved.',
+    copyright: '© 2026 AI Rider. All Rights Reserved.',
   },
 };
 
